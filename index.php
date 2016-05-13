@@ -1,1 +1,4 @@
-<a href="step-1.php">Step-1</a>
+<?php
+
+header('Location: step-1.php');
+exit;
