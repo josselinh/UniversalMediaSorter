@@ -12,29 +12,36 @@
         <legend>Masks</legend>
 
         <label>
-            <input type="checkbox" name="data[input][masks][]" value="IMG_YYYYMMDD_HHMMSS.jpg" checked/>
+            <input type="checkbox" name="data[input][masks][choice][]" value="IMG_YYYYMMDD_HHMMSS.jpg" checked/>
             IMG_YYYYMMDD_HHMMSS.jpg
         </label>
 
         <br />
 
         <label>
-            <input type="checkbox" name="data[input][masks][]" value="VID_YYYYMMDD_HHMMSS.mp4" checked/>
+            <input type="checkbox" name="data[input][masks][choice][]" value="VID_YYYYMMDD_HHMMSS.mp4" checked/>
             VID_YYYYMMDD_HHMMSS.mp4
         </label>
 
         <br />
 
         <label>
-            <input type="checkbox" name="data[input][masks][]" value="YYYYMMDD_HHMMSS.jpg" checked/>
+            <input type="checkbox" name="data[input][masks][choice][]" value="YYYYMMDD_HHMMSS.jpg" checked/>
             YYYYMMDD_HHMMSS.jpg
         </label>
         
         <br />
         
         <label>
-            <input type="checkbox" name="data[input][masks][]" value="YYYY-MM-DD_HH-MM-SS_X.jpg" checked/>
+            <input type="checkbox" name="data[input][masks][choice][]" value="YYYY-MM-DD_HH-MM-SS_X.jpg" checked/>
             YYYY-MM-DD_HH-MM-SS_X.jpg
+        </label>
+        
+        <br />
+        
+        <label>
+            <input type="checkbox" name="data[input][masks][choice][]" value="YYYY/MM/DD/IMG_YYYYMMDD_HHMMSS.jpg" checked/>
+            YYYY/MM/DD/IMG_YYYYMMDD_HHMMSS.jpg
         </label>
     </fieldset>
 
