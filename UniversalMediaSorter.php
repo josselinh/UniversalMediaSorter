@@ -33,7 +33,7 @@ class UniversalMediaSorter
         $regex['regex'] = str_replace($search, $replace, $string);
 
         if (preg_match_all('#YYYY|MM|DD|HH|II|SS|X#i', $string, $matches)) {
-            $regex['index'] = $matches;
+            $regex['index'] = $matches[0];
         }
 
         $this->regex[] = $regex;
