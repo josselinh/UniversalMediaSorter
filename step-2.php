@@ -1,5 +1,3 @@
-<pre><?php print_r($_POST); ?></pre>
-
 <?php
 /* Requires */
 require_once 'UniversalMediaSorter.php';

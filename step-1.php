@@ -4,14 +4,14 @@
 
         <label>
             Input directory :
-            <input type="text" name="data[directory][input]" placeholder="Input directory" value="/home/josselin/Images/Dossier"/>
+            <input type="text" name="data[directory][input]" placeholder="Input directory" value="/home/josselin/Projects/UniversalMediaSorter/Unsorted"/>
         </label>
         
         <br />
         
         <label>
             Output directory :
-            <input type="text" name="data[directory][output]" placeholder="Output directory" value="/home/josselin/Images/Sorted"/>
+            <input type="text" name="data[directory][output]" placeholder="Output directory" value="//home/josselin/Projects/UniversalMediaSorter/Sorted"/>
         </label>
     </fieldset>
 
@@ -63,7 +63,7 @@
         
         <label>
             Add :
-            <input type="text" name="data[masks][]" value="IMAGE_YYYYMMDD_HHIISS.jpg"/>
+            <input type="text" name="data[masks][]" value="GOX.jpg"/>
     </fieldset>
     
     <br />
