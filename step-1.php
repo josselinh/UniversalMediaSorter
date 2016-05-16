@@ -1,72 +1,64 @@
+<?php
+$inputFormats = array(
+    '%year%/%month%/%day%/IMG_%year%%month%%day%_%hour%%minute%%second%.jpg',
+    'IMG_%year%%month%%day%_%hour%%minute%%second%.jpg',
+    'VID_%year%%month%%day%_%hour%%minute%%second%.mp4',
+    'GO%anything%.jpg'
+);
+
+$outputFormats = array(
+    'jpg' => '%year%/%month%/%day%/IMG_%year%%month%%day%_%hour%%minute%%seconde%.jpg',
+    'mp4' => '%year%/%month%/%day%/VID_%year%%month%%day%_%hour%%minute%%seconde%.mp4'
+);
+?>
+
 <form method="post" action="step-2.php">
-    <fieldset>
-        <legend>Main</legend>
+    <div>
+        <span>Input</span>
 
-        <label>
-            Input directory :
-            <input type="text" name="data[directory][input]" placeholder="Input directory" value="/home/josselin/Projects/UniversalMediaSorter/Unsorted"/>
-        </label>
-        
-        <br />
-        
-        <label>
-            Output directory :
-            <input type="text" name="data[directory][output]" placeholder="Output directory" value="//home/josselin/Projects/UniversalMediaSorter/Sorted"/>
-        </label>
-    </fieldset>
+        <div>
+            <div>
+                <label>Directory to analyse :
+                    <input type="text" name="data[input][directory]" placeholder="Directory to analyse" value="/home/josselin/Projects/UniversalMediaSorter/Unsorted"/>
+                </label>
+            </div>
 
-    <fieldset>
-        <legend>Masks</legend>
+            <div>
+                <fieldset>
+                    <legend>Formats</legend>
 
-        <label>
-            <input type="checkbox" name="data[masks][]" value="IMG_YYYYMMDD_HHIISS.jpg" checked/>
-            IMG_YYYYMMDD_HHIISS.jpg
-        </label>
+                    <?php foreach ($inputFormats as $inputFormat): ?>
+                        <div>
+                            <label>
+                                <input type="checkbox" name="data[input][formats][]" value="<?php echo $inputFormat; ?>" checked/>
+                                <?php echo $inputFormat; ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </fieldset>
+            </div>
+        </div>
+    </div>
 
-        <br />
-        
-        <label>
-            <input type="checkbox" name="data[masks][]" value="IMG_DDMMYYYY_HHIISS.jpg" checked/>
-            IMG_DDMMYYYY_HHIISS.jpg
-        </label>
+    <div>
+        <span>Output</span>
 
-        <br />
+        <div>
+            <div>
+                <label>Destination directory :
+                    <input type="text" name="data[output][directory]" placeholder="Output directory" value="/home/josselin/Projects/UniversalMediaSorter/Sorted"/>
+                </label>
+            </div>
 
-        <label>
-            <input type="checkbox" name="data[masks][]" value="VID_YYYYMMDD_HHIISS.mp4" checked/>
-            VID_YYYYMMDD_HHIISS.mp4
-        </label>
-
-        <br />
-
-        <label>
-            <input type="checkbox" name="data[masks][]" value="YYYYMMDD_HHIISS.jpg" checked/>
-            YYYYMMDD_HHIISS.jpg
-        </label>
-        
-        <br />
-        
-        <label>
-            <input type="checkbox" name="data[masks][]" value="YYYY-MM-DD_HH-II-SS_X.jpg" checked/>
-            YYYY-MM-DD_HH-II-SS_X.jpg
-        </label>
-        
-        <br />
-        
-        <label>
-            <input type="checkbox" name="data[masks][]" value="YYYY/MM/DD/IMG_YYYYMMDD_HHIISS.jpg" checked/>
-            YYYY/MM/DD/IMG_YYYYMMDD_HHIISS.jpg
-        </label>
-        
-        <br />
-        <br />
-        
-        <label>
-            Add :
-            <input type="text" name="data[masks][]" value="GOX.jpg"/>
-    </fieldset>
-    
-    <br />
+            <?php foreach ($outputFormats as $ext => $outputFormat): ?>
+                <div>
+                    <label>Format <?php echo strtoupper($ext); ?> :
+                        <input type="text" name="data[output][formats][<?php echo $ext; ?>]" value="<?php echo $outputFormat; ?>"/>
+                    </label>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
     <button type="submit" name="submit" value="analyse">Analyse</button>
 </form>
