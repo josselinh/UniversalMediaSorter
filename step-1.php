@@ -1,64 +1,64 @@
-<?php
-$inputFormats = array(
-    '%year%/%month%/%day%/IMG_%year%%month%%day%_%hour%%minute%%second%.jpg',
-    'IMG_%year%%month%%day%_%hour%%minute%%second%.jpg',
-    'VID_%year%%month%%day%_%hour%%minute%%second%.mp4',
-    'GO%anything%.jpg'
-);
+<?php require_once './inc/step-1.php'; ?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Universal Media Sorter - Step #1</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
 
-$outputFormats = array(
-    'jpg' => '%year%/%month%/%day%/IMG_%year%%month%%day%_%hour%%minute%%seconde%.jpg',
-    'mp4' => '%year%/%month%/%day%/VID_%year%%month%%day%_%hour%%minute%%seconde%.mp4'
-);
-?>
-
-<form method="post" action="step-2.php">
-    <div>
-        <span>Input</span>
-
-        <div>
+    <body>
+        <form method="post" action="step-2.php">
             <div>
-                <label>Directory to analyse :
-                    <input type="text" name="data[input][directory]" placeholder="Directory to analyse" value="/home/josselin/Projects/UniversalMediaSorter/Unsorted"/>
-                </label>
+                <span>Input</span>
+
+                <div>
+                    <div>
+                        <label>Directory to analyse :
+                            <input type="text" name="data[input][directory]" placeholder="Directory to analyse" value="/home/josselin/Projects/UniversalMediaSorter/Unsorted"/>
+                        </label>
+                    </div>
+
+                    <div>
+                        <fieldset>
+                            <legend>Formats</legend>
+
+                            <?php foreach ($inputFormats as $inputFormat): ?>
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="data[input][formats][]" value="<?php echo $inputFormat; ?>" checked/>
+                                        <?php echo $inputFormat; ?>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                        </fieldset>
+                    </div>
+                </div>
             </div>
 
             <div>
-                <fieldset>
-                    <legend>Formats</legend>
+                <span>Output</span>
 
-                    <?php foreach ($inputFormats as $inputFormat): ?>
+                <div>
+                    <div>
+                        <label>Destination directory :
+                            <input type="text" name="data[output][directory]" placeholder="Output directory" value="/home/josselin/Projects/UniversalMediaSorter/Sorted"/>
+                        </label>
+                    </div>
+
+                    <?php foreach ($outputFormats as $ext => $outputFormat): ?>
                         <div>
-                            <label>
-                                <input type="checkbox" name="data[input][formats][]" value="<?php echo $inputFormat; ?>" checked/>
-                                <?php echo $inputFormat; ?>
+                            <label>Format <?php echo strtoupper($ext); ?> :
+                                <input type="text" name="data[output][formats][<?php echo $ext; ?>]" value="<?php echo $outputFormat; ?>"/>
                             </label>
                         </div>
                     <?php endforeach; ?>
-                </fieldset>
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <span>Output</span>
-
-        <div>
-            <div>
-                <label>Destination directory :
-                    <input type="text" name="data[output][directory]" placeholder="Output directory" value="/home/josselin/Projects/UniversalMediaSorter/Sorted"/>
-                </label>
-            </div>
-
-            <?php foreach ($outputFormats as $ext => $outputFormat): ?>
-                <div>
-                    <label>Format <?php echo strtoupper($ext); ?> :
-                        <input type="text" name="data[output][formats][<?php echo $ext; ?>]" value="<?php echo $outputFormat; ?>"/>
-                    </label>
                 </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
+            </div>
 
-    <button type="submit" name="submit" value="analyse">Analyse</button>
-</form>
+            <div>
+                <button type="submit" name="data[submit]" value="analyse">Analyse</button>
+            </div>
+        </form>
+    </body>
+</html>

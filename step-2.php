@@ -1,52 +1,65 @@
-<?php
+<?php require_once './inc/step-2.php'; ?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Universal Media Sorter - Step #2</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
 
-/**
- * Pretty print
- * @param mixed $value
- * @param string $name
- */
-function pr($value = array(), $name = 'default')
-{
-    echo '<table border="1">'
-    . '<thead><tr><th>' . $name . '</th></tr></thead>'
-    . '<tbody><tr><td><pre>' . print_r($value, true) . '</pre></td></tr></body>'
-    . '</table>';
-}
+    <body>
+        <form method="post" action="step-3.php">
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Format</th>
+                        <th>Exif Datetime Original</th>
+                        <th>Exif File Datetime</th>
+                        <th>Modified Date</th>
+                        <!--th>Other</th-->
+                    </tr>
+                </thead>
 
-/* Get post datas */
-$inputDirectory = (empty($_POST['data']['input']['directory']) ? null : $_POST['data']['input']['directory']);
-$inputFormats = (empty($_POST['data']['input']['formats']) ? null : $_POST['data']['input']['formats']);
-$outputDirectory = (empty($_POST['data']['output']['directory']) ? null : $_POST['data']['output']['directory']);
-$outputFormats = (empty($_POST['data']['output']['formats']) ? null : $_POST['data']['output']['formats']);
+                <tbody>
+                    <?php foreach ($files as $i => $file): ?>
+                        <tr>
+                            <td>
+                                <?php echo sprintf('<input type="hidden" name="data[input][%d][filename]" value="%s"/>%s', $i, $file['filename'], basename($file['filename'])); ?>
+                            </td>
 
-/* Requires */
-require_once 'UniversalMediaSorter.php';
+                            <td>
+                                <?php echo (!empty($file['datetime']['format']) ? sprintf('<label><input type="radio" name="data[input][%d][datetime]" value="%s" checked/>%s</label>', $i, $file['datetime']['format'], date('Y-m-d H:i:s', $file['datetime']['format'])) : null); ?>
+                            </td>
 
-/* Universal Media Sorter */
-$universalMediaSorter = new UniversalMediaSorter\UniversalMediaSorter();
+                            <td>
+                                <?php echo (!empty($file['datetime']['exif_datetime_original']) ? sprintf('<label><input type="radio" name="data[input][%d][datetime]" value="%s"/>%s</label>', $i, $file['datetime']['exif_datetime_original'], date('Y-m-d H:i:s', $file['datetime']['exif_datetime_original'])) : null); ?>
+                            </td>
 
-$files = $universalMediaSorter->findFiles($inputDirectory, $inputFormats)->getFiles();
-?>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Filename</th>
-            <th>Format</th>
-            <th>Exif Datetime Original</th>
-            <th>Exif File Datetime</th>
-            <th>Modified Date</th>
-        </tr>
-    </thead>
+                            <td>
+                                <?php echo (!empty($file['datetime']['exif_file_datetime']) ? sprintf('<label><input type="radio" name="data[input][%d][datetime]" value="%s"/>%s</label>', $i, $file['datetime']['exif_file_datetime'], date('Y-m-d H:i:s', $file['datetime']['exif_file_datetime'])) : null); ?>
+                            </td>
 
-    <tbody>
-        <?php foreach ($files as $file): ?>
-            <tr>
-                <td><?php echo basename($file['filename']); ?></td>
-                <td><?php echo date('Y-m-d H:i:s', $file['datetime']['format']); ?></td>
-                <td><?php echo date('Y-m-d H:i:s', $file['datetime']['exif_datetime_original']); ?></td>
-                <td><?php echo date('Y-m-d H:i:s', $file['datetime']['exif_file_datetime']); ?></td>
-                <td><?php echo date('Y-m-d H:i:s', $file['datetime']['modified']); ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+                            <td>
+                                <?php echo (!empty($file['datetime']['modified']) ? sprintf('<label><input type="radio" name="data[input][%d][datetime]" value="%s"/>%s</label>', $i, $file['datetime']['modified'], date('Y-m-d H:i:s', $file['datetime']['modified'])) : null); ?>
+                            </td>
+
+                            <!--td>
+                            <?php echo sprintf('<input type="radio" name="data[input][%d][datetime]" value="other"/><input type="text" name="data[input][%d][other]"/>', $i, $i); ?>
+                            </td-->
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <input type="hidden" name="data[output][directory]" value="<?php echo $outputDirectory; ?>"/>
+            <?php foreach ($outputFormats as $ext => $outputFormat): ?>
+                <input type="hidden" name="data[output][formats][<?php echo $ext; ?>]" value="<?php echo $outputFormat; ?>"/>
+            <?php endforeach; ?>
+
+            <div>
+                <button type="submit" name="submit" value="sort">Sort</button>
+            </div>
+        </form>
+    </body>
+</html>
