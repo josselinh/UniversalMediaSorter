@@ -79,14 +79,25 @@ class UniversalMediaSorter
             $regex = str_replace(array('%year%', '%month%', '%day%', '%hour%', '%minute%', '%second%', '%anything%'), array('(\d{4})', '(\d{2})', '(\d{2})', '(\d{2})', '(\d{2})', '(\d{2})', '(.*)'), $inputFormat);
 
             if (preg_match('#' . $regex . '#i', $inputFile, $inputFileMatches)) {
-                $inputFormatMatches = array();
+                /* File informations */              
+                $file = array(
+                    'filename' => $inputFile,
+                    'datetime' => array(
+                        'format' => null,
+                        'exif_datetime_original' => null,
+                        'exif_file_datetime' => null,
+                        'modified' => filemtime($inputFile)));
+                
+                /* Intialise default date value */
                 $inputFileFormatValues = array(
                     'year' => null,
                     'month' => null,
                     'day' => null,
-                    'hour' => 0,
-                    'minute' => 0,
-                    'second' => 0);
+                    'hour' => null,
+                    'minute' => null,
+                    'second' => null);
+                
+                $inputFormatMatches = array();
 
                 if (preg_match_all('#' . implode('|', $this->formatKeys) . '#i', $inputFormat, $inputFormatMatches)) {
                     foreach ($inputFormatMatches[0] as $index => $format) {
@@ -142,15 +153,36 @@ class UniversalMediaSorter
                     }
                 }
 
-                $file = array(
-                    'filename' => $inputFile,
-                    'datetime_format' => null,
-                    'datetime_modified' => date('Y-m-d H:i:s', filemtime($inputFile)),
-                    'datetime_exif' => null);
-
+                /* Only save date if year, month and day are not empties */
                 if (!empty($inputFileFormatValues['year']) && !empty($inputFileFormatValues['month']) && !empty($inputFileFormatValues['day'])) {
-                    $file['datetime_format'] = date('Y-m-d H:i:s', mktime($inputFileFormatValues['hour'], $inputFileFormatValues['minute'], $inputFileFormatValues['second'], $inputFileFormatValues['month'], $inputFileFormatValues['day'], $inputFileFormatValues['year']));
+                    $file['datetime']['format'] = mktime($inputFileFormatValues['hour'], $inputFileFormatValues['minute'], $inputFileFormatValues['second'], $inputFileFormatValues['month'], $inputFileFormatValues['day'], $inputFileFormatValues['year']);
                 }
+                
+                /* Exif informations */
+                $exif = @read_exif_data($inputFile);
+                
+                if (false !== $exif) {
+                    if (!empty($exif['DateTimeOriginal'])) {
+                        $file['datetime']['exif_datetime_original'] = strtotime($exif['DateTimeOriginal']);
+                    }
+                    
+                    if (!empty($exif['FileDateTime'])) {
+                        $file['datetime']['exif_file_datetime'] = $exif['FileDateTime'];
+                    }
+                }
+                
+                
+                /*$exif = @read_exif_data($file);
+
+                if (false !== $exif) {
+                    if (!empty($exif['DateTimeOriginal'])) {
+                        $dates['exif_datetimeoriginal'] = strtotime($exif['DateTimeOriginal']);
+                    }
+
+                    if (!empty($exif['FileDateTime'])) {
+                        $dates['exif_filedatetime'] = $exif['FileDateTime'];
+                    }
+                }*/
 
                 $this->files[] = $file;
             }

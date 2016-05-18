@@ -26,4 +26,27 @@ require_once 'UniversalMediaSorter.php';
 $universalMediaSorter = new UniversalMediaSorter\UniversalMediaSorter();
 
 $files = $universalMediaSorter->findFiles($inputDirectory, $inputFormats)->getFiles();
-pr($files);
+?>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Filename</th>
+            <th>Format</th>
+            <th>Exif Datetime Original</th>
+            <th>Exif File Datetime</th>
+            <th>Modified Date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <?php foreach ($files as $file): ?>
+            <tr>
+                <td><?php echo basename($file['filename']); ?></td>
+                <td><?php echo date('Y-m-d H:i:s', $file['datetime']['format']); ?></td>
+                <td><?php echo date('Y-m-d H:i:s', $file['datetime']['exif_datetime_original']); ?></td>
+                <td><?php echo date('Y-m-d H:i:s', $file['datetime']['exif_file_datetime']); ?></td>
+                <td><?php echo date('Y-m-d H:i:s', $file['datetime']['modified']); ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
