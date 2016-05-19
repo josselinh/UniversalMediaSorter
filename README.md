@@ -73,5 +73,7 @@ $inputFiles = array (
     ...
 ```
 $outputDirectory contains the target directory.
+
 $outputFormats is the same as previous.
+
 $reports contains the old name, new name and the result for each file.
