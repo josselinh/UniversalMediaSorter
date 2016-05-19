@@ -2,6 +2,8 @@
 
 namespace UniversalMediaSorter;
 
+use Exception;
+
 /**
  * Description of UniversalMediaSorter
  *
@@ -24,7 +26,7 @@ class UniversalMediaSorter
      * Find files according to format
      * @param string $inputDirectory
      * @param array $inputFormats
-     * @return \UniversalMediaSorter\UniversalMediaSorter
+     * @return UniversalMediaSorter
      */
     public function findFiles($inputDirectory = null, $inputFormats = array())
     {
@@ -76,7 +78,7 @@ class UniversalMediaSorter
     {
         foreach ($inputFormats as $inputFormat) {
             $inputFileMatches = array();
-            $regex = str_replace(array('%year%', '%month%', '%day%', '%hour%', '%minute%', '%second%', '%anything%'), array('(\d{4})', '(\d{2})', '(\d{2})', '(\d{2})', '(\d{2})', '(\d{2})', '(.*)'), $inputFormat);
+            $regex = str_replace($this->formatKeys, array('(\d{4})', '(\d{2})', '(\d{2})', '(\d{2})', '(\d{2})', '(\d{2})', '(.*)'), $inputFormat);
 
             if (preg_match('#' . $regex . '#i', $inputFile, $inputFileMatches)) {
                 /* File informations */
@@ -206,47 +208,56 @@ class UniversalMediaSorter
 
         foreach ($this->files as $index => $file) {
             $reports[$index] = array('filename' => array('old' => $file['filename'], 'new' => null), 'report' => null);
-            $pathinfo = pathinfo($file['filename']);
-            $fileExt = $pathinfo['extension'];
 
-            if (!empty($outputFormats[$fileExt])) {
-                /* New filename */
-                $newFileName = str_replace(array('%year%', '%month%', '%day%', '%hour%', '%minute%', '%second%'), array(date('Y', $file['datetime']), date('m', $file['datetime']), date('d', $file['datetime']), date('H', $file['datetime']), date('i', $file['datetime']), date('s', $file['datetime'])), $outputDirectory . '/' . $outputFormats[$fileExt]);
-                $newFilenamePathinfo = pathinfo($newFileName);
+            if (!empty($file['datetime'])) {
+                $pathinfo = pathinfo($file['filename']);
+                $fileExt = $pathinfo['extension'];
 
-                /* Check if the files already exists */
-                if (is_file($newFileName)) {
-                    $i = 1;
+                if (!empty($outputFormats[$fileExt])) {
+                    /* New filename */
+                    $newFileName = str_replace($this->formatKeys, array(date('Y', $file['datetime']), date('m', $file['datetime']), date('d', $file['datetime']), date('H', $file['datetime']), date('i', $file['datetime']), date('s', $file['datetime']), ''), $outputDirectory . '/' . $outputFormats[$fileExt]);
 
-                    while (is_file($newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . $newFilenamePathinfo['extension'])) {
-                        $i = $i + 1;
-                    }
+                    /* Delete unwishes % */
+                    $newFileName = str_replace('%', '', $newFileName);
 
-                    $newFileName = $newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . $newFilenamePathinfo['extension'];
-                }
+                    $newFilenamePathinfo = pathinfo($newFileName);
 
-                /* Check if the output directory exists */
-                if (!is_dir($newFilenamePathinfo['dirname'])) {
-                    if (!mkdir($newFilenamePathinfo['dirname'], 0777, true)) {
-                        $reports[$index]['report'] = 'Could not create directory';
-                    }
-                }
+                    /* Check if the files already exists */
+                    if (is_file($newFileName)) {
+                        $i = 1;
 
-                if (is_dir($newFilenamePathinfo['dirname'])) {
-                    if (rename($file['filename'], $newFileName)) {
-                        $reports[$index]['filename']['new'] = $newFileName;
-
-                        if (touch($newFileName, $file['datetime'])) {
-                            $reports[$index]['report'] = 'Success';
-                        } else {
-                            $reports[$index]['report'] = 'Moved, but could not change modify date';
+                        while (is_file($newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . $newFilenamePathinfo['extension'])) {
+                            $i = $i + 1;
                         }
-                    } else {
-                        $reports[$index]['report'] = 'Could not move file';
+
+                        $newFileName = $newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . $newFilenamePathinfo['extension'];
                     }
+
+                    /* Check if the output directory exists */
+                    if (!is_dir($newFilenamePathinfo['dirname'])) {
+                        if (!mkdir($newFilenamePathinfo['dirname'], 0777, true)) {
+                            $reports[$index]['report'] = 'Could not create directory';
+                        }
+                    }
+
+                    if (is_dir($newFilenamePathinfo['dirname'])) {
+                        if (rename($file['filename'], $newFileName)) {
+                            $reports[$index]['filename']['new'] = $newFileName;
+
+                            if (touch($newFileName, $file['datetime'])) {
+                                $reports[$index]['report'] = 'Success';
+                            } else {
+                                $reports[$index]['report'] = 'Moved, but could not change modify date';
+                            }
+                        } else {
+                            $reports[$index]['report'] = 'Could not move file';
+                        }
+                    }
+                } else {
+                    $reports[$index]['report'] = 'Could not find output format';
                 }
             } else {
-                $reports[$index]['report'] = 'Could not find output format';
+                $reports[$index]['report'] = 'Datetime value is empty';
             }
         }
 
@@ -265,7 +276,7 @@ class UniversalMediaSorter
     /**
      * Set files
      * @param array $files
-     * @return \UniversalMediaSorter\UniversalMediaSorter
+     * @return UniversalMediaSorter
      */
     public function setFiles($files = array())
     {

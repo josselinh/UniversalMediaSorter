@@ -25,4 +25,22 @@ require_once 'UniversalMediaSorter.php';
 /* Universal Media Sorter */
 $universalMediaSorter = new UniversalMediaSorter\UniversalMediaSorter();
 
-$files = $universalMediaSorter->findFiles($inputDirectory, $inputFormats)->getFiles();
+try {
+    $files = $universalMediaSorter->findFiles($inputDirectory, $inputFormats)->getFiles();
+} catch (Exception $e) {
+    exit($e->getMessage());
+}
+
+$datetime_titles = array();
+
+if (!empty($files) && !empty($files[0]['datetime'])) {
+    $datetime_titles = array_keys($files[0]['datetime']);
+    $datetime_titles = array_map(function($s) {
+        return ucwords(str_replace('_', ' ', $s));
+    }, $datetime_titles);
+}
+
+function minNotNull(Array $values)
+{
+    return min(array_diff(array_map('intval', $values), array(0)));
+}

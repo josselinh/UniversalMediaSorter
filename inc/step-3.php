@@ -24,4 +24,8 @@ require_once 'UniversalMediaSorter.php';
 /* Universal Media Sorter */
 $universalMediaSorter = new UniversalMediaSorter\UniversalMediaSorter();
 
-$reports = $universalMediaSorter->setFiles($inputFiles)->sort($outputDirectory, $outputFormats);
+try {
+    $reports = $universalMediaSorter->setFiles($inputFiles)->sort($outputDirectory, $outputFormats);
+} catch (Exception $e) {
+    exit($e->getMessage());
+}
