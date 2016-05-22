@@ -18,6 +18,7 @@ $inputDirectory = (empty($_POST['data']['input']['directory']) ? null : $_POST['
 $inputFormats = (empty($_POST['data']['input']['formats']) ? null : $_POST['data']['input']['formats']);
 $outputDirectory = (empty($_POST['data']['output']['directory']) ? null : $_POST['data']['output']['directory']);
 $outputFormats = (empty($_POST['data']['output']['formats']) ? null : $_POST['data']['output']['formats']);
+$outputOptions = (empty($_POST['data']['output']['options']) ? null : $_POST['data']['output']['options']);
 
 /* Requires */
 require_once 'UniversalMediaSorter.php';

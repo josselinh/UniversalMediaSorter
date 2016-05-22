@@ -5,12 +5,13 @@
         <title>Universal Media Sorter - Step #2</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="default.css">
     </head>
 
     <body>        
         <?php if (!empty($files)) : ?>
             <form method="post" action="step-3.php">
-                <table border="1">
+                <table>
                     <thead>
                         <tr>
                             <th>Filename</th>
@@ -30,12 +31,12 @@
 
                                 <?php
                                 $min = minNotNull($file['datetime']);
-                                
+
                                 foreach ($file['datetime'] as $datetime) {
                                     echo '<td>';
 
                                     if (!empty($datetime)) {
-                                        echo sprintf('<label><input type="radio" name="data[input][%d][datetime]" value="%s" %s/>%s</label>', $i, $datetime, ($min === $datetime ? 'checked' : '') ,date('Y-m-d H:i:s', $datetime));
+                                        echo sprintf('<label><input type="radio" name="data[input][%d][datetime]" value="%s" %s/>%s</label>', $i, $datetime, ($min === $datetime ? 'checked' : ''), date('Y-m-d H:i:s', $datetime));
                                     }
 
                                     echo '</td>';
@@ -53,6 +54,9 @@
                 <input type="hidden" name="data[output][directory]" value="<?php echo $outputDirectory; ?>"/>
                 <?php foreach ($outputFormats as $ext => $outputFormat): ?>
                     <input type="hidden" name="data[output][formats][<?php echo $ext; ?>]" value="<?php echo $outputFormat; ?>"/>
+                <?php endforeach; ?>
+                <?php foreach ($outputOptions as $key => $outputOption): ?>
+                    <input type="hidden" name="data[output][options][<?php echo $key; ?>]" value="<?php echo $outputOption; ?>"/>
                 <?php endforeach; ?>
 
                 <div>

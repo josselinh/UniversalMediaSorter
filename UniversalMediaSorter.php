@@ -184,9 +184,10 @@ class UniversalMediaSorter
      * Sort
      * @param string $outputDirectory
      * @param array $outputFormats
+     * @param array $options
      * @return array
      */
-    public function sort($outputDirectory = null, $outputFormats = array())
+    public function sort($outputDirectory = null, $outputFormats = array(), $options = array())
     {
         /* Check $outputDirectory */
         if (empty($outputDirectory)) {
@@ -224,13 +225,17 @@ class UniversalMediaSorter
 
                     /* Check if the files already exists */
                     if (is_file($newFileName)) {
-                        $i = 1;
+                        if (!empty($options['existing'])) {
+                            if ('rename' == $options['existing']) {
+                                $i = 1;
 
-                        while (is_file($newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . $newFilenamePathinfo['extension'])) {
-                            $i = $i + 1;
+                                while (is_file($newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . '.' . $newFilenamePathinfo['extension'])) {
+                                    $i = $i + 1;
+                                }
+
+                                $newFileName = $newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . '.' . $newFilenamePathinfo['extension'];
+                            }
                         }
-
-                        $newFileName = $newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . $newFilenamePathinfo['extension'];
                     }
 
                     /* Check if the output directory exists */

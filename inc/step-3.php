@@ -17,6 +17,7 @@ function pr($value = array(), $name = 'default')
 $inputFiles = (empty($_POST['data']['input']) ? null : $_POST['data']['input']);
 $outputDirectory = (empty($_POST['data']['output']['directory']) ? null : $_POST['data']['output']['directory']);
 $outputFormats = (empty($_POST['data']['output']['formats']) ? null : $_POST['data']['output']['formats']);
+$outputOptions = (empty($_POST['data']['output']['options']) ? null : $_POST['data']['output']['options']);
 
 /* Requires */
 require_once 'UniversalMediaSorter.php';
@@ -25,7 +26,7 @@ require_once 'UniversalMediaSorter.php';
 $universalMediaSorter = new UniversalMediaSorter\UniversalMediaSorter();
 
 try {
-    $reports = $universalMediaSorter->setFiles($inputFiles)->sort($outputDirectory, $outputFormats);
+    $reports = $universalMediaSorter->setFiles($inputFiles)->sort($outputDirectory, $outputFormats, $outputOptions);
 } catch (Exception $e) {
     exit($e->getMessage());
 }
