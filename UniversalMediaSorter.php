@@ -204,6 +204,12 @@ class UniversalMediaSorter
             throw new Exception('File value is empty');
         }
 
+        /* Default options */
+        if (empty($options)) {
+            $options = array(
+                'existing' => 'rename');
+        }
+
         /* Browse files */
         $reports = array();
 
@@ -217,46 +223,50 @@ class UniversalMediaSorter
                 if (!empty($outputFormats[$fileExt])) {
                     /* New filename */
                     $newFileName = str_replace($this->formatKeys, array(date('Y', $file['datetime']), date('m', $file['datetime']), date('d', $file['datetime']), date('H', $file['datetime']), date('i', $file['datetime']), date('s', $file['datetime']), ''), $outputDirectory . '/' . $outputFormats[$fileExt]);
-
-                    /* Delete unwishes % */
                     $newFileName = str_replace('%', '', $newFileName);
-
-                    $newFilenamePathinfo = pathinfo($newFileName);
+                    $newFileNamePathinfo = pathinfo($newFileName);
+                    $newFileNameProcessing = true;
 
                     /* Check if the files already exists */
                     if (is_file($newFileName)) {
-                        if (!empty($options['existing'])) {
-                            if ('rename' == $options['existing']) {
-                                $i = 1;
+                        if (!empty($options['existing']) && 'rename' == $options['existing']) {
+                            $i = 1;
 
-                                while (is_file($newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . '.' . $newFilenamePathinfo['extension'])) {
-                                    $i = $i + 1;
+                            while (is_file($newFileNamePathinfo['dirname'] . '/' . $newFileNamePathinfo['filename'] . '_' . $i . '.' . $newFileNamePathinfo['extension'])) {
+                                $i = $i + 1;
+                            }
+
+                            $newFileName = $newFileNamePathinfo['dirname'] . '/' . $newFileNamePathinfo['filename'] . '_' . $i . '.' . $newFileNamePathinfo['extension'];
+                        }
+
+                        if (!empty($options['existing']) && 'ignore' == $options['existing']) {
+                            $newFileNameProcessing = false;
+                        }
+                    }
+
+                    if ($newFileNameProcessing) {
+                        /* Check if the output directory exists */
+                        if (!is_dir($newFileNamePathinfo['dirname'])) {
+                            if (!mkdir($newFileNamePathinfo['dirname'], 0777, true)) {
+                                $reports[$index]['report'] = 'Could not create directory';
+                            }
+                        }
+
+                        if (is_dir($newFileNamePathinfo['dirname'])) {
+                            if (rename($file['filename'], $newFileName)) {
+                                $reports[$index]['filename']['new'] = $newFileName;
+
+                                if (touch($newFileName, $file['datetime'])) {
+                                    $reports[$index]['report'] = 'Success';
+                                } else {
+                                    $reports[$index]['report'] = 'Moved, but could not change modify date';
                                 }
-
-                                $newFileName = $newFilenamePathinfo['dirname'] . '/' . $newFilenamePathinfo['filename'] . '_' . $i . '.' . $newFilenamePathinfo['extension'];
-                            }
-                        }
-                    }
-
-                    /* Check if the output directory exists */
-                    if (!is_dir($newFilenamePathinfo['dirname'])) {
-                        if (!mkdir($newFilenamePathinfo['dirname'], 0777, true)) {
-                            $reports[$index]['report'] = 'Could not create directory';
-                        }
-                    }
-
-                    if (is_dir($newFilenamePathinfo['dirname'])) {
-                        if (rename($file['filename'], $newFileName)) {
-                            $reports[$index]['filename']['new'] = $newFileName;
-
-                            if (touch($newFileName, $file['datetime'])) {
-                                $reports[$index]['report'] = 'Success';
                             } else {
-                                $reports[$index]['report'] = 'Moved, but could not change modify date';
+                                $reports[$index]['report'] = 'Could not move file';
                             }
-                        } else {
-                            $reports[$index]['report'] = 'Could not move file';
                         }
+                    } else {
+                        $reports[$index]['report'] = 'Ignored';
                     }
                 } else {
                     $reports[$index]['report'] = 'Could not find output format';

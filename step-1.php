@@ -58,12 +58,16 @@
                     <div>
                         Existing file :
                         <label>
+                            <input type="radio" name="data[output][options][existing]" value="rename" checked/>
+                            Rename
+                        </label>
+                        <label>
                             <input type="radio" name="data[output][options][existing]" value="overwrite"/>
                             Overwrite
                         </label>
                         <label>
-                            <input type="radio" name="data[output][options][existing]" value="rename" checked/>
-                            Rename
+                            <input type="radio" name="data[output][options][existing]" value="ignore"/>
+                            Ignore
                         </label>
                     </div>
                 </div>
